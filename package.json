@@ -1,0 +1,35 @@
+{
+  "name": "azb-applet",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview",
+    "format": "prettier --write ./src"
+  },
+  "dependencies": {
+    "@vant/touch-emulator": "^1.4.0",
+    "axios": "^1.7.7",
+    "pinia": "^2.2.2",
+    "vant": "^4.9.5",
+    "vue": "^3.4.37",
+    "vue-router": "^4.4.5"
+  },
+  "devDependencies": {
+    "@manycore/custom-ksg-viewer-sdk": "^1.1.12",
+    "@manycore/miniapp-sdk": "^1.26.1",
+    "@types/node": "^22.5.4",
+    "@vant/auto-import-resolver": "^1.2.1",
+    "@vitejs/plugin-vue": "^5.1.2",
+    "postcss-px-to-viewport-8-plugin": "^1.2.5",
+    "prettier": "^3.3.3",
+    "typescript": "^5.5.3",
+    "unocss": "^0.62.3",
+    "unplugin-auto-import": "^0.18.2",
+    "unplugin-vue-components": "^0.27.4",
+    "vite": "^5.4.1",
+    "vue-tsc": "^2.0.29"
+  }
+}
