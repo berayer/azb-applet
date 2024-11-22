@@ -21,3 +21,6 @@ key
 *.njsproj
 *.sln
 *.sw?
+
+# local
+.env
