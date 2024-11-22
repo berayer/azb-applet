@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useAppStore } from '@/store'
+import { IS_ORDER_BARCODE, todo } from '@/util'
 import { Icon } from '@iconify/vue'
 import { ERenderMode, ViewType } from '@manycore/custom-ksg-viewer-sdk'
 import { NFlex, NInput, NScrollbar, NSlider } from 'naive-ui'
@@ -24,19 +25,25 @@ function onConfirm(event: any) {
   showPicker.value = false
 }
 const showInput = ref(false)
-function todo() {
-  window.$message.info('功能开发中，敬请期待')
-}
+
 function handleInput(confirm: boolean) {
   if (!inputValue.value)
     return
   if (confirm) {
-    appStore.loadOrder(inputValue.value)
+    submit(inputValue.value)
   }
   inputValue.value = ''
 }
 function closeMenu() {
   show.value = false
+}
+function submit(val: string) {
+  if (IS_ORDER_BARCODE.test(val)) {
+    appStore.scanInput(val)
+  }
+  else {
+    window.$message.error('请输入正确的订单号或条码')
+  }
 }
 </script>
 

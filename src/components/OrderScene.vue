@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useAppStore } from '@/store'
 import { debounce } from 'es-toolkit'
+import { NSpin } from 'naive-ui'
 import { onMounted, watch } from 'vue'
 
 const appStore = useAppStore()
@@ -30,5 +31,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div id="viewer" class="h-full w-full" />
+  <NSpin class="flex-1" :show="appStore.loading" content-class="h-full w-full" description="加载中...">
+    <div id="viewer" class="h-full w-full" />
+  </NSpin>
 </template>
