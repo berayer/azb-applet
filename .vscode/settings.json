@@ -3,7 +3,6 @@
   // Disable the default formatter, use eslint instead
   "prettier.enable": false,
   "editor.formatOnSave": false,
-  "terminal.integrated.suggest.enabled": true,
 
   // Auto fix
   "editor.codeActionsOnSave": {
