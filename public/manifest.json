@@ -2,7 +2,7 @@
   "name": "安装宝测试版1.0",
   "version": "0.0.1",
   "frame": {
-    "view": "/",
+    "view": "./index.html",
     "mountPointId": "main"
   }
 }
