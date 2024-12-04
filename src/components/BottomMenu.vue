@@ -45,6 +45,15 @@ function submit(val: string) {
     window.$message.error('请输入正确的订单号或条码')
   }
 }
+
+function clickSR() {
+  if (appStore.cu && appStore.cu()) {
+    appStore.sr!()
+  }
+  else {
+    showInput.value = true
+  }
+}
 </script>
 
 <template>
@@ -56,7 +65,7 @@ function submit(val: string) {
           <Icon icon="carbon:renew" />
         </template>
       </TabbarItem>
-      <TabbarItem @click="showInput = true">
+      <TabbarItem @click="clickSR">
         <template #icon>
           <Icon icon="carbon:scan-alt" />
         </template>

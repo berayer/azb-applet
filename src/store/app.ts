@@ -1,5 +1,7 @@
 import type { ViewType } from '@manycore/custom-ksg-viewer-sdk'
 import { fetchDesignInfo, fetchInfo, fetchKjlId } from '@/api'
+import { useWebSocket } from '@/hooks'
+import { IS_ORDER_BARCODE } from '@/util'
 import { Application, ERenderMode } from '@manycore/custom-ksg-viewer-sdk'
 import { defineStore } from 'pinia'
 
@@ -22,6 +24,11 @@ interface AppSotre {
   orderNo: string
   /** 产品名称 */
   productName: string
+  /** 微信id */
+  openId: string
+
+  cu?: () => boolean
+  sr?: () => void
 }
 
 export const useAppStore = defineStore('appStore', {
@@ -34,10 +41,19 @@ export const useAppStore = defineStore('appStore', {
     orderNo: '',
     loading: false,
     productName: '还未加载订单',
+    openId: '',
   }),
   actions: {
+    submit(val: string) {
+      if (IS_ORDER_BARCODE.test(val)) {
+        this.scanInput(val)
+      }
+      else {
+        window.$message.error(`请输入正确的订单号或条码: ${val}`)
+      }
+    },
     /** 挂载场景 */
-    loadScene(el: HTMLElement) {
+    async loadScene(el: HTMLElement) {
       if (this.scene)
         return
       this.scene = new Application(el)
@@ -68,6 +84,20 @@ export const useAppStore = defineStore('appStore', {
         }
       })
       // this.scene.sceneService.config.interaction.rotation.enabled.set(false);
+      this.openId = await Manycore.Miniapp.getUrlExtraParam() || ''
+
+      console.log('ExtraParam', this.openId)
+
+      if (this.openId) {
+        const { canUse, sendRequest } = useWebSocket(`${this.openId}:KJL`, (code) => {
+          console.log(code)
+          if (code)
+            this.submit(code.replace(/["']/g, ''))
+        })
+
+        this.cu = canUse
+        this.sr = sendRequest
+      }
     },
     async loadOrder(orderNo: string) {
       this.loading = true
