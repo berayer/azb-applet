@@ -1,37 +1,33 @@
 <script setup lang="ts">
 import { useAppStore } from '@/store'
-import { debounce } from 'es-toolkit'
 import { NSpin } from 'naive-ui'
 import { onMounted, watch } from 'vue'
 
 const appStore = useAppStore()
-watch(() => appStore.hideDoor, () => {
+watch(() => appStore.option.hideDoor, () => {
   appStore.hideDoorUpdate()
 })
 
-watch(() => appStore.showHouseType, () => {
+watch(() => appStore.option.showHouseType, () => {
   appStore.houseLayoutUpdate()
 })
 
-watch(() => appStore.bomValue, () => {
+watch(() => appStore.option.bomValue, () => {
   appStore.bomValueUpdate()
 })
 
-watch(() => appStore.renderMode, () => {
-  appStore.matModeUpdate()
+watch(() => appStore.option.renderMode, () => {
+  appStore.renderModeUpdate()
 })
 onMounted(() => {
   const el = document.querySelector<HTMLElement>('#viewer')!
   // 挂载viewer
-  appStore.loadScene(el)
-  window.onresize = debounce(() => {
-    appStore.scene?.sceneService.resize()
-  }, 500)
+  appStore.initScene(el)
 })
 </script>
 
 <template>
-  <NSpin class="flex-1" :show="appStore.loading" content-class="h-full w-full" description="加载中...">
+  <NSpin class="flex-1" :show="appStore.state.loading" content-class="h-full w-full" description="加载中...">
     <div id="viewer" class="h-full w-full" />
   </NSpin>
 </template>

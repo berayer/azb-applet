@@ -22,11 +22,11 @@ const aspect_ratio = computed(() => width.value / height.value)
 <template>
   <NConfigProvider :locale="zhCN" :date-locale="dateZhCN" :theme-overrides="themeOverrides">
     <NaiveProvider>
-      <div class="h-screen w-screen flex" :class="{ 'flex-col': aspect_ratio < 1 }">
+      <div class="w-screen h-screen flex" :class="{ 'flex-col': aspect_ratio < 1 }">
         <div class="flex-1 flex flex-col">
           <div class="h-12 bg-[#f0f0f0] w-full flex justify-between items-center px-4 text-lg font-600 color-blueGray-8">
-            <span>{{ appStore.productName }}</span>
-            <span>{{ appStore.orderNo }}</span>
+            <span>{{ appStore.order.productName }}</span>
+            <span>{{ appStore.order.orderNo }}</span>
           </div>
           <OrderScene />
         </div>
