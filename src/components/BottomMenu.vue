@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useAppStore } from '@/store'
-import { IS_ORDER_BARCODE, todo } from '@/util'
+import { todo } from '@/util'
 import { Icon } from '@iconify/vue'
 import { ERenderMode, ViewType } from '@manycore/custom-ksg-viewer-sdk'
 import { NFlex, NInput, NScrollbar, NSlider } from 'naive-ui'
@@ -8,48 +8,47 @@ import { Button, CellGroup, Dialog, Field, Form, Picker, Popup, Switch, Tabbar, 
 import { ref } from 'vue'
 
 const appStore = useAppStore()
+// 底部菜单是否显示
 const show = ref(false)
+// 材质选择器是否显示
 const showPicker = ref(false)
+// 输入框值
 const inputValue = ref('')
+// 是否显示输入框
+const showInput = ref(false)
+// 渲染模式选项
 const renderModelOptions = [
   { text: '材质模式', value: ERenderMode.SHADING },
   { text: '线框模式', value: ERenderMode.OUTLINE_ONLY },
   { text: '材质线框模式', value: ERenderMode.OUTLINE_WITH_SHADING },
   { text: '透明线框模式', value: ERenderMode.TRANSPARENT_LINE },
 ]
-const renderModeText = ref<string>(renderModelOptions.find(item => item.value === appStore.renderMode)?.text || '')
+// 渲染模式显示的文本
+const renderModeText = ref<string>(renderModelOptions.find(item => item.value === appStore.option.renderMode)?.text || '')
+// 渲染模式更新
 function onConfirm(event: any) {
   const { selectedOptions } = event
-  appStore.renderMode = selectedOptions[0]?.value
+  appStore.option.renderMode = selectedOptions[0]?.value
   renderModeText.value = selectedOptions[0]?.text
   showPicker.value = false
 }
-const showInput = ref(false)
-
+// 输入框提交事件
 function handleInput(confirm: boolean) {
+  // 取消
   if (!inputValue.value)
     return
   if (confirm) {
-    submit(inputValue.value)
+    appStore.handleInput(inputValue.value)
   }
   inputValue.value = ''
 }
-function closeMenu() {
-  show.value = false
-}
-function submit(val: string) {
-  if (IS_ORDER_BARCODE.test(val)) {
-    appStore.scanInput(val)
-  }
-  else {
-    window.$message.error('请输入正确的订单号或条码')
-  }
-}
-
+// 扫一扫图标点击事件
 function clickSR() {
-  if (appStore.cu && appStore.cu()) {
-    appStore.sr!()
+  // 如果有扫描函数则调用
+  if (appStore.scanQRCode) {
+    appStore.scanQRCode()
   }
+  // 否则打开输入框
   else {
     showInput.value = true
   }
@@ -76,25 +75,26 @@ function clickSR() {
         </template>
       </TabbarItem>
     </Tabbar>
+    <!-- 弹出菜单 -->
     <Popup v-model:show="show" round position="bottom" teleport="body">
-      <div class="flex w-full flex-col items-center bg-gray-100" @click="closeMenu">
+      <div class="flex w-full flex-col items-center bg-gray-100" @click="show = false">
         <div class="bg-gray-300 h-1 w-12 rounded-md my-3" />
         <Form class="w-full" input-align="right">
           <NScrollbar class="h-[300px]" :size="0">
             <CellGroup inset title="场景配置">
               <Field label="是否隐藏门抽">
                 <template #input>
-                  <Switch v-model="appStore.hideDoor" />
+                  <Switch v-model="appStore.option.hideDoor" />
                 </template>
               </Field>
               <Field label="是否显示户型">
                 <template #input>
-                  <Switch v-model="appStore.showHouseType" />
+                  <Switch v-model="appStore.option.showHouseType" />
                 </template>
               </Field>
               <Field label="模型爆炸距离">
                 <template #input>
-                  <NSlider v-model:value="appStore.bomValue" />
+                  <NSlider v-model:value="appStore.option.bomValue" />
                 </template>
               </Field>
               <Field
@@ -134,6 +134,7 @@ function clickSR() {
         </Form>
       </div>
     </Popup>
+    <!-- 材质选择器 -->
     <Popup v-model:show="showPicker" position="bottom">
       <Picker
         :columns="renderModelOptions"
@@ -141,6 +142,7 @@ function clickSR() {
         @cancel="showPicker = false"
       />
     </Popup>
+    <!-- 弹出输入框 -->
     <Dialog v-model:show="showInput" title="请输入条码" show-cancel-button @confirm="handleInput(true)" @cancel="handleInput(false)">
       <div class="p-4">
         <NInput v-model:value="inputValue" :bordered="false" size="large" />

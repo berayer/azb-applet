@@ -1,28 +1,32 @@
+/**
+ * 通过websocket服务转发消息触发微信扫一扫
+ * @param uid 微信id
+ * @param callback 扫描完成的回调函数
+ */
 export function useWebSocket(uid: string, callback: (data: string) => void) {
-  const wb = new WebSocket(`wss://58.248.30.148:9527/v2/api/websocket/${uid}`)
+  const wb = new WebSocket(`${import.meta.env.VITE_WEBSOCKET_SERVER}/${uid}`)
 
-  console.log('websocketlaod', uid)
+  console.log('webSocket建立:', uid)
 
   wb.onmessage = (e) => {
     const response = e.data as string
+    console.log('接受扫一扫消息:', response)
     callback(response)
   }
 
   wb.onerror = (e) => {
-    console.log(e)
+    console.log('webSocket错误:', e)
   }
 
-  function sendRequest(request: string = '') {
-    wb.send(JSON.stringify(request))
+  function scanQRCode() {
+    if (wb.readyState === 1) {
+      console.log('发送扫一扫消息')
+      wb.send('')
+    }
+    else {
+      console.log('webSocket状态异常:', wb.readyState)
+    }
   }
 
-  function canUse() {
-    console.log(wb.readyState)
-    return wb.readyState === 1
-  }
-
-  return {
-    sendRequest,
-    canUse,
-  }
+  return { scanQRCode }
 }
